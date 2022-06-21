@@ -1,0 +1,59 @@
+@startuml
+!theme toy
+skinparam componentStyle uml2
+
+title "Сервис нотификации"
+
+component "Внешние сервисы" as ext_serv
+
+node {
+queue "Rabbit MQ" as notif_rabbit
+database "PostgreSQL" as notif_postgres
+
+component "Django Admin" as notif_django_admin
+component "Scheduler" as notif_scheduler
+component "Worker" as notif_worker
+note right
+1) Собирает чанки
+2) Собирает письмо из данных
+для отправки
+3) Запрашивает недоставющие данные
+для отправки сообщения через API
+4) Отправляет письма
+пользователям
+end note
+component "Worker_2" as notif_worker2
+note top
+1) Забирает из групповой
+очереди
+2) Разбивает групповые рассылки
+на чанки и отправляет в очередь
+сообщений
+end note
+component "API(FastAPI)" as notif_api
+note top
+1) принимает данные для рассылки
+2) инкрементирует лайки
+(храняться в БД в JSON формате)
+end note
+component "Nginx" as notif_nginx
+notif_nginx <--> notif_api
+notif_nginx <--> notif_django_admin
+notif_api --> notif_rabbit
+notif_scheduler <-> notif_postgres
+notif_scheduler <-> notif_api
+notif_django_admin -> notif_postgres
+notif_rabbit --> notif_worker
+notif_worker <-> notif_postgres
+notif_worker2 <--> notif_rabbit
+notif_worker <--> ext_serv
+notif_api --> notif_postgres
+
+}
+
+
+legend left
+    |<#0000FF>     | Legend |
+end legend
+
+@enduml
