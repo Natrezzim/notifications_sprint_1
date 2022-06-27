@@ -4,6 +4,7 @@ WORKDIR /usr/src
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+USER root
 RUN apk update && \
     apk add build-base librdkafka-dev && \
     apk --no-cache add curl && \
@@ -19,3 +20,5 @@ EXPOSE 8010
 
 COPY . ./app
 
+RUN chmod +x /usr/src/app/entrypoint.sh
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]

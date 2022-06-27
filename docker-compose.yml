@@ -5,11 +5,22 @@ services:
     build:
       context: api/src/app
       dockerfile: ./Dockerfile
-    entrypoint: uvicorn app.main:app --host 0.0.0.0 --port 8010
     ports:
       - 8010
     env_file:
       - api/src/app/.env
+    depends_on:
+      - db
+
+  db:
+    container_name: notification_db
+    image: postgres:12.0-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./init_scrips/.env
 
   nginx:
     container_name: notification_nginx
@@ -23,7 +34,20 @@ services:
     depends_on:
       - service
 
+  rabbitmq:
+    image: rabbitmq:3.10.5-management-alpine
+    container_name: notification_rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+    env_file:
+      - api/src/app/.env
+
 
 
 volumes:
   nginx:
+  postgres_data:
+  rabbitmq_data:
