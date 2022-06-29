@@ -10,7 +10,28 @@ services:
       - 8010
     env_file:
       - api/src/app/.env
-
+  db:
+    container_name: notification_db
+    image: postgres:12.0-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - admin/.env
+  admin:
+    container_name: notification_admin
+    build:
+      context: ./admin
+      dockerfile: ./Dockerfile
+    env_file:
+      - admin/.env
+    ports:
+      - 8000
+    volumes:
+      - static_volume:/usr/src/admin/static/
+    depends_on:
+      - db
   nginx:
     container_name: notification_nginx
     build:
@@ -20,10 +41,13 @@ services:
       - 80:80
     volumes:
       - nginx:/var/log/nginx/
+      - static_volume:/usr/src/admin/static/
     depends_on:
       - service
-
+      - admin
 
 
 volumes:
   nginx:
+  postgres_data:
+  static_volume:
