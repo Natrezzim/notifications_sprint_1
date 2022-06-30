@@ -11,7 +11,7 @@ services:
       - api/src/app/.env
     depends_on:
       - db
-
+      
   db:
     container_name: notification_db
     image: postgres:12.0-alpine
@@ -20,7 +20,21 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ./init_scrips/.env
+      - admin/.env
+      
+  admin:
+    container_name: notification_admin
+    build:
+      context: ./admin
+      dockerfile: ./Dockerfile
+    env_file:
+      - admin/.env
+    ports:
+      - 8000
+    volumes:
+      - static_volume:/usr/src/admin/static/
+    depends_on:
+      - db
 
   nginx:
     container_name: notification_nginx
@@ -31,8 +45,10 @@ services:
       - 80:80
     volumes:
       - nginx:/var/log/nginx/
+      - static_volume:/usr/src/admin/static/
     depends_on:
       - service
+      - admin
 
   rabbitmq:
     image: rabbitmq:3.10.5-management-alpine
@@ -47,7 +63,9 @@ services:
 
 
 
+
 volumes:
   nginx:
   postgres_data:
   rabbitmq_data:
+  static_volume:
