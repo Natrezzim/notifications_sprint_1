@@ -54,22 +54,22 @@ class NotificationsDb:
 
     def get_unsubscribe(self, type_notification, users_id):
         return self.session.query(UnsubscribeUser).where(UnsubscribeUser.user_id.in_(users_id)).join(
-            TypeNotification, UnsubscribeUser.type_notification_id == TypeNotification.id).filter(
+            TypeNotification, UnsubscribeUser.notification_type_id == TypeNotification.id).filter(
             TypeNotification.title == type_notification).all()
 
     def set_status_notification(self, notification_id, status):
         task_notification = self.session.query(Notification).get(notification_id)
         task_notification.send_status = status
-        task_notification.updated = datetime.now()
+        task_notification.updated_at = datetime.now()
         self.session.add(task_notification)
         self.session.commit()
 
     def get_users_from_group(self, group_id, limit, offset):
         return self.session.query(GroupNotificationUser).filter(
-            GroupNotificationUser.group_notification_id == group_id
+            GroupNotificationUser.notification_group_id == group_id
         ).order_by(GroupNotificationUser.id).limit(limit).offset(offset).all()
 
     def get_count_users_in_group(self, group_id):
         return self.session.query(GroupNotificationUser).filter(
-            GroupNotificationUser.group_notification_id == group_id
+            GroupNotificationUser.notification_group_id == group_id
         ).count()

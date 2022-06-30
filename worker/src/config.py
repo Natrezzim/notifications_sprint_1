@@ -54,7 +54,7 @@ LOGGING_CONFIG = {
             'level': 'INFO',
             'propagate': True
         },
-        'worker': {
+        'core.worker': {
             'handlers': ['stream_handler'],
             'level': 'INFO',
             'propagate': True
@@ -70,15 +70,15 @@ class NotificationStatus(Enum):
 
 
 class Settings(BaseSettings):
-    rabbit_host: str = Field('localhost', env='my_api_key')
+    rabbit_host: str = Field('rabbitmq', env='my_api_key')
     rabbit_send_email: RabbitSendEmailQueue = RabbitSendEmailQueue()
     rabbit_chunk: RabbitChunkQueue = RabbitChunkQueue()
 
-    notification_db_host: str = Field('localhost', env='DB_HOST')
+    notification_db_host: str = Field('db', env='DB_HOST')
     notification_db_port: int = Field(5432, env='DB_PORT')
     notification_db_name: str = Field('notification', env='DB_NAME')
-    notification_db_user: str = Field('app', env='DB_USER')
-    notification_db_password: str = Field('123qwe', env='DB_PASSWORD')
+    notification_db_user: str = Field('postgres', env='DB_USER')
+    notification_db_password: str = Field('1234', env='DB_PASSWORD')
 
     url_service_user: str = Field('http://auth/user_info', env='API_USER_INFO')
 

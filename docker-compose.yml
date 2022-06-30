@@ -61,6 +61,27 @@ services:
     env_file:
       - api/src/app/.env
 
+  worker_chunk:
+    container_name: worker_chunk
+    build:
+      context: worker/
+      dockerfile: ./Dockerfile
+    depends_on:
+      - db
+      - rabbitmq
+    entrypoint: 'python3 /usr/local/bin/worker/chunk_user_group.py'
+
+  worker_send_email:
+    container_name: worker_send_email
+    build:
+      context: worker/
+      dockerfile: ./Dockerfile
+    depends_on:
+      - db
+      - rabbitmq
+    entrypoint: 'python3 /usr/local/bin/worker/send_email.py'
+
+
 volumes:
   nginx:
   postgres_data:

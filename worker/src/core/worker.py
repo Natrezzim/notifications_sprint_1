@@ -181,6 +181,7 @@ class WorkerChunkUserFromGroup(WorkerAbstract):
                 rabbit_message.context.payload,
                 message_base,
         ):
+            logger.info(new_message)
             self.rabbit_publish.publish(json.dumps(new_message.dict()))
 
     def run(self):

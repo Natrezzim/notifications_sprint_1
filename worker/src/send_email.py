@@ -31,7 +31,7 @@ if __name__ == '__main__':
     email = EmailSMTPFake(host='', port=1, user='', password='', from_email=settings.from_email)
 
     rabbit = Rabbit(
-        'localhost',
+        settings.rabbit_host,
         queue=settings.rabbit_send_email.queue,
         exchange=settings.rabbit_send_email.exchange,
         init_channel=init_channel
