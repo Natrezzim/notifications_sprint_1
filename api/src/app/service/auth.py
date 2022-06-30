@@ -2,9 +2,8 @@ from http import HTTPStatus
 from typing import Dict
 
 import jwt
-from fastapi import HTTPException
-
 from app.core.config import Settings
+from fastapi import HTTPException
 
 settings = Settings()
 
@@ -13,6 +12,11 @@ class Auth:
     secret = settings.jwt_secret_key
 
     def decode_token(self, token: str) -> Dict[str, int]:
+        """
+
+        :param token: JWT token
+        :return: Dict[str, int]
+        """
         try:
             payload = jwt.decode(token, self.secret, algorithms=['HS256'])
             if payload['type'] == 'access':
