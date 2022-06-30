@@ -5,11 +5,36 @@ services:
     build:
       context: api/src/app
       dockerfile: ./Dockerfile
-    entrypoint: uvicorn app.main:app --host 0.0.0.0 --port 8010
     ports:
       - 8010
     env_file:
       - api/src/app/.env
+    depends_on:
+      - db
+      
+  db:
+    container_name: notification_db
+    image: postgres:12.0-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - admin/.env
+      
+  admin:
+    container_name: notification_admin
+    build:
+      context: ./admin
+      dockerfile: ./Dockerfile
+    env_file:
+      - admin/.env
+    ports:
+      - 8000
+    volumes:
+      - static_volume:/usr/src/admin/static/
+    depends_on:
+      - db
 
   nginx:
     container_name: notification_nginx
@@ -20,29 +45,24 @@ services:
       - 80:80
     volumes:
       - nginx:/var/log/nginx/
+      - static_volume:/usr/src/admin/static/
     depends_on:
       - service
-
-  db:
-    image: postgres:13-alpine
-    container_name: notification_db
-    env_file:
-      - .env
-    ports:
-      - 5432:5432
-    volumes:
-      - db_data:/var/lib/postgresql/data
+      - admin
 
   rabbitmq:
-      image: rabbitmq:3-management
-      container_name: 'notification_rabbitmq'
-      volumes:
-        - rabbit_data:/var/lib/rabbitmq/
-      ports:
-        - 5672:5672
-        - 15672:15672
+    image: rabbitmq:3.10.5-management-alpine
+    container_name: notification_rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+    env_file:
+      - api/src/app/.env
 
 volumes:
   nginx:
-  db_data:
-  rabbit_data:
+  postgres_data:
+  rabbitmq_data:
+  static_volume:
