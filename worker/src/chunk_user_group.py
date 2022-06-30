@@ -37,19 +37,16 @@ if __name__ == '__main__':
         db_name=settings.notification_db_name
     )
 
-    # db.connect()
-    # print(db.get_users_from_group('bc567824-5c62-415e-b371-204b694accc3', 5, 0))
-
     rabbit_chunk = Rabbit(
         settings.rabbit_host,
         queue=settings.rabbit_chunk.queue,
         exchange=settings.rabbit_chunk.exchange,
-                             init_channel=init_channel_consumer
+        init_channel=init_channel_consumer
     )
     rabbit_send_email = Rabbit(
         settings.rabbit_host,
         queue=settings.rabbit_send_email.queue,
-                            exchange=settings.rabbit_send_email.exchange,
+        exchange=settings.rabbit_send_email.exchange,
         init_channel=init_channel_publish
     )
 
