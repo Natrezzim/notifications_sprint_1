@@ -10,13 +10,15 @@ settings = Settings()
 
 def init_channel(cls):
     cls.channel.exchange_declare(
-        exchange=settings.rabbit_send_email.exchange,
-        exchange_type=settings.rabbit_send_email.exchange_type,
-        durable=settings.rabbit_send_email.durable,
+        exchange=settings.rabbit_send_email_priority.exchange,
+        exchange_type=settings.rabbit_send_email_priority.exchange_type,
+        durable=settings.rabbit_send_email_priority.durable,
     )
 
-    cls.channel.queue_declare(queue=settings.rabbit_send_email.queue, durable=settings.rabbit_send_email.durable)
-    cls.channel.queue_bind(exchange=settings.rabbit_send_email.exchange, queue=settings.rabbit_send_email.queue)
+    cls.channel.queue_declare(queue=settings.rabbit_send_email_priority.queue,
+                              durable=settings.rabbit_send_email_priority.durable)
+    cls.channel.queue_bind(exchange=settings.rabbit_send_email_priority.exchange,
+                           queue=settings.rabbit_send_email_priority.queue)
 
 
 if __name__ == '__main__':
@@ -34,8 +36,8 @@ if __name__ == '__main__':
         settings.rabbit_host,
         settings.rabbit_user,
         settings.rabbit_password,
-        queue=settings.rabbit_send_email.queue,
-        exchange=settings.rabbit_send_email.exchange,
+        queue=settings.rabbit_send_email_priority.queue,
+        exchange=settings.rabbit_send_email_priority.exchange,
         init_channel=init_channel
     )
 

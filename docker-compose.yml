@@ -8,7 +8,7 @@ services:
     ports:
       - 8010
     env_file:
-      - env/.env
+      - .env
     depends_on:
       - db
       
@@ -20,7 +20,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - env/.env
+      - .env
       
   admin:
     container_name: notification_admin
@@ -28,7 +28,7 @@ services:
       context: ./admin
       dockerfile: ./Dockerfile
     env_file:
-      - env/.env
+      - .env
     ports:
       - 8000
     volumes:
@@ -59,7 +59,7 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq/
     env_file:
-      - env/.env
+      - .env
 
   worker_chunk:
     container_name: worker_chunk
@@ -67,7 +67,7 @@ services:
       context: worker/
       dockerfile: ./Dockerfile
     env_file:
-      - env/.env
+      - .env
     depends_on:
       - db
       - rabbitmq
@@ -79,11 +79,35 @@ services:
       context: worker/
       dockerfile: ./Dockerfile
     env_file:
-      - env/.env
+      - .env
     depends_on:
       - db
       - rabbitmq
     entrypoint: 'python3 /usr/local/bin/worker/send_email.py'
+
+  worker_send_email_priority:
+    container_name: worker_send_email_priority
+    build:
+      context: worker/
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - rabbitmq
+    entrypoint: 'python3 /usr/local/bin/worker/send_email_priority.py'
+
+  scheduler:
+    container_name: scheduler
+    build:
+      context: scheduler/
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - service
+    entrypoint: 'python3 /usr/local/bin/scheduler/main.py'
 
 
 volumes:

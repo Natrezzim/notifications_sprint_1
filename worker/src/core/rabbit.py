@@ -10,9 +10,13 @@ logger = logging.getLogger(__name__)
 
 
 class Rabbit:
-    def __init__(self, host, queue, exchange, init_channel=None):
+    def __init__(self, host, user, password, queue, exchange, init_channel=None):
         self.host = host
-        self.parameters = pika.ConnectionParameters(host=self.host)
+        self.user = user
+        self.password = password
+        credentials = pika.PlainCredentials(self.user, self.password)
+
+        self.parameters = pika.ConnectionParameters(host=self.host, credentials=credentials)
         self.connection = None
         self.channel = None
         self.queue = queue
