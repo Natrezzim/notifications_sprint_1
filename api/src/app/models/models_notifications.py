@@ -27,7 +27,7 @@ class Payload(BaseModel):
 
 
 class Context(BaseModel):
-    users_id: List[UUID]
+    users_id: Optional[List[UUID]]
     group_id: Optional[UUID]
     payload: Optional[Payload]
     link: Optional[str]
@@ -35,5 +35,5 @@ class Context(BaseModel):
 
 class NotificationsExt(BaseModel):
     type_send: TypeEnum = TypeEnum.new_series
-    template_id: TemplateEnum = TemplateEnum.UUID_4
+    template_id: TemplateEnum = TemplateEnum.UUID_3
     context: Context
