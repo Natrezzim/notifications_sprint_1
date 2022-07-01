@@ -3,7 +3,7 @@ import logging
 from json import JSONEncoder
 
 import aio_pika
-from aio_pika import Message
+from aio_pika import Message, ExchangeType
 from app.core.config import Settings
 from app.utils.json_encoder import new_default
 
@@ -39,7 +39,13 @@ async def declare_queues():
     connection = await get_connection()
     channel = await connection.channel()
 
-    await channel.declare_queue("topic_priority", durable=True)
-    await channel.declare_queue("topic_simplify", durable=True)
+    email_exchange = await channel.declare_exchange(settings.email_exchange, ExchangeType.DIRECT)
+    group_chunk_exchange = await channel.declare_exchange(settings.group_exchange, ExchangeType.DIRECT)
+
+    send_email_priority_queue = await channel.declare_queue(settings.email_queue, durable=True)
+    group_chunk_queue = await channel.declare_queue(settings.group_queue, durable=True)
+
+    await send_email_priority_queue.bind(email_exchange)
+    await group_chunk_queue.bind(group_chunk_exchange)
 
     await connection.close()
