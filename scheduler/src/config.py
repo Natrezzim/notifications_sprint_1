@@ -1,3 +1,5 @@
+import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -25,17 +27,10 @@ LOG_CONFIG = {
 }
 TIME_TO_RESTART = 60
 
-# PG_DSL = {
-#     'dbname': os.environ.get('POSTGRES_DB'),
-#     'user': os.environ.get('POSTGRES_USER'),
-#     'password': os.environ.get('POSTGRES_PASSWORD'),
-#     'host': os.environ.get('POSTGRES_HOST'),
-#     'port': os.environ.get('POSTGRES_PORT'),
-# }
 PG_DSL = {
-    'dbname': 'notification',
-    'user': 'postgres',
-    'password': '1234',
-    'host': 'db',
-    'port': 5432,
+    'host': os.environ.get('BACKEND_DB_HOST'),
+    'port': os.environ.get('BACKEND_DB_PORT'),
+    'user': os.environ.get('BACKEND_DB_USER'),
+    'password': os.environ.get('BACKEND_DB_PASSWORD'),
+    'dbname': os.environ.get('BACKEND_DB_NAME'),
 }

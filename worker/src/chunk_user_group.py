@@ -39,12 +39,16 @@ if __name__ == '__main__':
 
     rabbit_chunk = Rabbit(
         settings.rabbit_host,
+        settings.rabbit_user,
+        settings.rabbit_password,
         queue=settings.rabbit_chunk.queue,
         exchange=settings.rabbit_chunk.exchange,
         init_channel=init_channel_consumer
     )
     rabbit_send_email = Rabbit(
         settings.rabbit_host,
+        settings.rabbit_user,
+        settings.rabbit_password,
         queue=settings.rabbit_send_email.queue,
         exchange=settings.rabbit_send_email.exchange,
         init_channel=init_channel_publish
