@@ -35,5 +35,8 @@ class Context(BaseModel):
 
 class NotificationsExt(BaseModel):
     type_send: TypeEnum = TypeEnum.new_series
-    template_id: TemplateEnum = TemplateEnum.UUID_3
+    template_id: UUID
+    notification_id: Optional[UUID]
+    last_chunk: bool = False
     context: Context
+

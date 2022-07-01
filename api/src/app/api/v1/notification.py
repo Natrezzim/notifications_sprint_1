@@ -20,7 +20,6 @@ settings = Settings()
 )
 async def new_series(
         notification: NotificationsExt,
-        credentials: HTTPBasicCredentials = Depends(security),
 ):
     """
 
@@ -30,6 +29,7 @@ async def new_series(
     """
     if notification.type_send == notification.type_send.new_series or \
             notification.type_send == notification.type_send.email_confirmation:
+        notification.last_chunk = True
         await send_rabbitmq(notification.dict(), settings.email_queue)
     else:
         await send_rabbitmq(notification.dict(), settings.group_queue)
