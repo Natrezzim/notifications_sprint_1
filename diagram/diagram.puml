@@ -12,7 +12,7 @@ database "PostgreSQL" as notif_postgres
 
 component "Django Admin" as notif_django_admin
 component "Scheduler" as notif_scheduler
-component "Worker" as notif_worker
+component "Worker_send_email" as notif_worker
 note right
 1) Собирает чанки
 2) Собирает письмо из данных
@@ -22,7 +22,7 @@ note right
 4) Отправляет письма
 пользователям
 end note
-component "Worker_2" as notif_worker2
+component "Worker_chunk" as notif_worker2
 note top
 1) Забирает из групповой
 очереди
@@ -32,9 +32,7 @@ note top
 end note
 component "API(FastAPI)" as notif_api
 note top
-1) принимает данные для рассылки
-2) инкрементирует лайки
-(храняться в БД в JSON формате)
+принимает данные для рассылки
 end note
 component "Nginx" as notif_nginx
 notif_nginx <--> notif_api

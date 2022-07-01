@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.post(
-    '/notifications',
+    '/send',
     summary='Уведомления',
     description='Отправка уведомления в очередь RebbitMQ',
     tags=['notifications'],

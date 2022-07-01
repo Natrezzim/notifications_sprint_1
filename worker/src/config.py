@@ -70,7 +70,7 @@ class NotificationStatus(Enum):
 
 
 class Settings(BaseSettings):
-    rabbit_host: str = Field('rabbitmq', env='my_api_key')
+    rabbit_host: str = Field('rabbitmq', env='API_KEY')
     rabbit_send_email: RabbitSendEmailQueue = RabbitSendEmailQueue()
     rabbit_chunk: RabbitChunkQueue = RabbitChunkQueue()
 
@@ -86,3 +86,6 @@ class Settings(BaseSettings):
 
     from_email: str = 'Sinema INFO'
     chunk_size: int = 5
+
+    class Config:
+        env_file = ".env"

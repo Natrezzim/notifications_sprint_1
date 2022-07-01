@@ -8,7 +8,7 @@ services:
     ports:
       - 8010
     env_file:
-      - api/src/app/.env
+      - env/.env
     depends_on:
       - db
       
@@ -20,7 +20,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - admin/.env
+      - env/.env
       
   admin:
     container_name: notification_admin
@@ -28,7 +28,7 @@ services:
       context: ./admin
       dockerfile: ./Dockerfile
     env_file:
-      - admin/.env
+      - env/.env
     ports:
       - 8000
     volumes:
@@ -59,13 +59,15 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq/
     env_file:
-      - api/src/app/.env
+      - env/.env
 
   worker_chunk:
     container_name: worker_chunk
     build:
       context: worker/
       dockerfile: ./Dockerfile
+    env_file:
+      - env/.env
     depends_on:
       - db
       - rabbitmq
@@ -76,6 +78,8 @@ services:
     build:
       context: worker/
       dockerfile: ./Dockerfile
+    env_file:
+      - env/.env
     depends_on:
       - db
       - rabbitmq
