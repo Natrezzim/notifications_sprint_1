@@ -1,4 +1,5 @@
 import logging
+from http import HTTPStatus
 from logging import config
 from time import sleep
 
@@ -29,8 +30,10 @@ def process(postgres):
                 notification_id=item.get('id')
             )
             logging.debug(message.dict())
-            postgres.set_status_processing(item.get('id'))
-            api_send_message(message.dict())
+            resp = api_send_message(message.dict())
+            if resp.status_code == HTTPStatus.OK:
+                postgres.set_status_processing(item.get('id'))
+
     except Exception as e:
         logging.error(e)
 

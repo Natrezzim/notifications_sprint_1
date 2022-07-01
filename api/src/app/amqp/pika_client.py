@@ -39,8 +39,8 @@ async def declare_queues():
     connection = await get_connection()
     channel = await connection.channel()
 
-    email_exchange = await channel.declare_exchange(settings.email_exchange, ExchangeType.DIRECT)
-    group_chunk_exchange = await channel.declare_exchange(settings.group_exchange, ExchangeType.DIRECT)
+    email_exchange = await channel.declare_exchange(settings.email_exchange, ExchangeType.DIRECT, durable=True)
+    group_chunk_exchange = await channel.declare_exchange(settings.group_exchange, ExchangeType.DIRECT, durable=True)
 
     send_email_priority_queue = await channel.declare_queue(settings.email_queue, durable=True)
     group_chunk_queue = await channel.declare_queue(settings.group_queue, durable=True)
