@@ -28,19 +28,23 @@ jobs:
         run: |
           mkdir -p lint_report/api/src/app/styleguide/
           mkdir -p lint_report/worker/src/styleguide/
+          mkdir -p lint_report/scheduler/src/styleguide/
           mkdir -p lint_report/admin/app/notification/styleguide/
           mkdir -p lint_report/api/src/app/mypy/
           mkdir -p lint_report/worker/src/mypy/
+          mkdir -p lint_report/scheduler/src/mypy/
           mkdir -p lint_report/admin/app/notification/mypy/
       - name: mypy
         run: |
           mypy --html-report lint_report/api/src/app/mypy/ api/src/app* || true
           mypy --html-report lint_report/worker/src/mypy/ worker/src* || true
+          mypy --html-report lint_report/scheduler/src/mypy/ worker/src* || true
           mypy --html-report lint_report/admin/app/notification/mypy/ admin/app/notification* || true
       - name: lint-codestyle
         run: |
           flake8 api/src/app --exit-zero --format=html --htmldir=lint_report/api/src/app/styleguide/
           flake8 worker/src --exit-zero --format=html --htmldir=lint_report/worker/src/styleguide/
+          flake8 scheduler/src --exit-zero --format=html --htmldir=lint_report/scheduler/src/styleguide/
           flake8 admin/app/notification --exit-zero --format=html --htmldir=lint_report/admin/app/notification/styleguide/
       - name: load-report
         uses: actions/upload-artifact@v3.1.0
