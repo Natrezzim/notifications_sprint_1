@@ -1,4 +1,6 @@
 import logging
+from datetime import datetime
+from enum import Enum
 from logging import config
 from typing import List
 
@@ -11,6 +13,12 @@ from config import PG_DSL, LOG_CONFIG
 config.dictConfig(LOG_CONFIG)
 
 
+class NotificationStatus(Enum):
+    waiting = 'waiting'
+    processing = 'processing'
+    done = 'done'
+
+
 class PGConnectorBase:
     def __init__(self, logging=logging):
         self.db = None
@@ -18,15 +26,13 @@ class PGConnectorBase:
         self._logging = logging
         self.connect()
 
-    # @backoff.on_exception(backoff.expo, Exception)
+    @backoff.on_exception(backoff.expo, Exception)
     def connect(self) -> None:
-        if not self.db:
-            self.db = psycopg2.connect(**PG_DSL, cursor_factory=RealDictCursor)
-        if not self.cursor:
-            self.cursor = self.db.cursor()
-        print('connect db')
+        self.db = psycopg2.connect(**PG_DSL, cursor_factory=RealDictCursor)
+        self.cursor = self.db.cursor()
+        logging.info('connect db')
 
-    # @backoff.on_exception(backoff.expo, Exception)
+    @backoff.on_exception(backoff.expo, Exception)
     def query(self, sql: str) -> List[RealDictRow]:
         try:
             self.cursor.execute(sql)
@@ -37,26 +43,43 @@ class PGConnectorBase:
         result = self.cursor.fetchall()
         return result
 
+    @backoff.on_exception(backoff.expo, Exception)
     def set_query(self, sql: str):
-        self.cursor.execute(sql)
+        try:
+            self.cursor.execute(sql)
+        except psycopg2.OperationalError:
+            self._logging.error('Ошибка подключения к базе postgres')
+            self.connect()
+            self.cursor.execute(sql)
         self.db.commit()
 
-    def __del__(self) -> None:
+    def close(self):
         if self.db:
             self.db.close()
+            self.db = None
+            self.cursor = None
+
+    def __del__(self) -> None:
+        self.close()
 
 
 class PGNotification(PGConnectorBase):
     def get_notification(self):
-        sql = (
-            "select notification.id, context.template_id as template_id, context.params "
+        sql_tmp = (
+            "select notification.id, context.template_id as template_id, context.params, type.title "
             "from notification_notification notification "
             "left join notification_notificationcontext context on context.id = notification.context_id "
-            "WHERE notification.send_date <= CURRENT_TIMESTAMP and send_status = 'waiting'"
+            "left join notification_template template on context.template_id = template.id "
+            "left join notification_notificationtype type on type.id = template.notification_type_id "
+            "WHERE notification.send_date <= %(timestamp)s and send_status = %(notification_status)s"
         )
-        print('sql query')
-        print(sql)
+        sql = self.cursor.mogrify(sql_tmp, {
+            'timestamp': datetime.now(),
+            'notification_status': NotificationStatus.waiting.value
+        })
+        logging.debug(sql)
         result = self.query(sql)
+        logging.debug(result)
         return result
 
     def set_status_processing(self, notification_id):
@@ -66,8 +89,7 @@ class PGNotification(PGConnectorBase):
             "WHERE id = %(notification_id)s"
         )
         sql = self.cursor.mogrify(sql_tmp, {
-            'status': 'processing',
+            'status': NotificationStatus.processing.value,
             'notification_id': notification_id
         })
         self.set_query(sql)
-

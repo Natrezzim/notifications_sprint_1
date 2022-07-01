@@ -2,11 +2,13 @@ from typing import Optional, List
 
 from pydantic import BaseModel
 
+
 class MessageBase(BaseModel):
     type_send: str
     template_id: str
     last_chunk: bool = False
     notification_id: Optional[str]
+
 
 class FilmData(BaseModel):
     film_id: str

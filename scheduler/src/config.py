@@ -1,4 +1,3 @@
-import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -20,7 +19,7 @@ LOG_CONFIG = {
     "formatters": {
         "std_out": {
             "format": "%(asctime)s : %(levelname)s : %(module)s : %(funcName)s : %(message)s",
-            "datefmt": "%d-%m-%Y %I:%M:%S"
+            "datefmt": "%d-%m-%Y %H:%M:%S"
         }
     },
 }
@@ -37,6 +36,6 @@ PG_DSL = {
     'dbname': 'notification',
     'user': 'postgres',
     'password': '1234',
-    'host': 'localhost',
+    'host': 'db',
     'port': 5432,
 }

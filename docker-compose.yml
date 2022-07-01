@@ -32,7 +32,7 @@ services:
     ports:
       - 8000
     volumes:
-      - static_volume:/usr/src/admin/static/
+      - static_volume:/usr/src/static/
     depends_on:
       - db
 
@@ -45,7 +45,7 @@ services:
       - 80:80
     volumes:
       - nginx:/var/log/nginx/
-      - static_volume:/usr/src/admin/static/
+      - static_volume:/usr/src/static/
     depends_on:
       - service
       - admin
@@ -80,6 +80,16 @@ services:
       - db
       - rabbitmq
     entrypoint: 'python3 /usr/local/bin/worker/send_email.py'
+
+  scheduler:
+    container_name: scheduler
+    build:
+      context: scheduler/
+      dockerfile: ./Dockerfile
+    depends_on:
+      - db
+      - service
+    entrypoint: 'python3 /usr/local/bin/scheduler/main.py'
 
 
 volumes:
