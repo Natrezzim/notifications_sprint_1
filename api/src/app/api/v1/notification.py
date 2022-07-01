@@ -1,5 +1,6 @@
 
 from app.amqp.pika_client import send_rabbitmq
+from app.core.config import Settings
 from app.models.models_notifications import NotificationsExt
 from app.service.auth import Auth
 from fastapi import APIRouter, Depends
@@ -8,6 +9,7 @@ from fastapi.security import HTTPBasicCredentials, HTTPBearer
 security = HTTPBearer()
 auth_handler = Auth()
 router = APIRouter()
+settings = Settings()
 
 
 @router.post(
@@ -28,7 +30,7 @@ async def new_series(
     """
     if notification.type_send == notification.type_send.new_series or \
             notification.type_send == notification.type_send.email_confirmation:
-        await send_rabbitmq(notification.dict(), "topic_priority")
+        await send_rabbitmq(notification.dict(), settings.email_queue)
     else:
-        await send_rabbitmq(notification.dict(), "topic_simplify")
+        await send_rabbitmq(notification.dict(), settings.group_queue)
     return notification
