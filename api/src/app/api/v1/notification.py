@@ -2,12 +2,8 @@
 from app.amqp.pika_client import send_rabbitmq
 from app.core.config import Settings
 from app.models.models_notifications import NotificationsExt
-from app.service.auth import Auth
-from fastapi import APIRouter, Depends
-from fastapi.security import HTTPBasicCredentials, HTTPBearer
+from fastapi import APIRouter
 
-security = HTTPBearer()
-auth_handler = Auth()
 router = APIRouter()
 settings = Settings()
 
