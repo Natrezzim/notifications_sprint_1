@@ -1,6 +1,7 @@
 import ast
 
 from django.contrib import admin
+from django_summernote.admin import SummernoteModelAdmin
 
 from notification.forms import NotificationGroupForm, NotificationForm
 from notification.models import (
@@ -32,8 +33,9 @@ class NotificationTypeAdmin(admin.ModelAdmin):
 
 
 @admin.register(Template)
-class TemplateAdmin(admin.ModelAdmin):
+class TemplateAdmin(SummernoteModelAdmin):
     """Template admin."""
+    summernote_fields = ('code',)
     list_display = ['title', 'subject', 'notification_type']
 
 

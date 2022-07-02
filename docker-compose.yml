@@ -33,6 +33,7 @@ services:
       - 8000
     volumes:
       - static_volume:/usr/src/static/
+      - media_volume:/usr/src/media/
     depends_on:
       - db
 
@@ -46,6 +47,7 @@ services:
     volumes:
       - nginx:/var/log/nginx/
       - static_volume:/usr/src/static/
+      - media_volume:/usr/src/media/
     depends_on:
       - service
       - admin
@@ -115,3 +117,4 @@ volumes:
   postgres_data:
   rabbitmq_data:
   static_volume:
+  media_volume:
