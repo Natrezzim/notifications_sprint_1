@@ -97,5 +97,11 @@ class Settings(BaseSettings):
     from_email: str = Field('Cinema INFO', env='FROM_EMAIL')
     chunk_size: int = 50
 
-    class Config:
-        env_file = ".env"
+    mailhog_host = 'mailhog_notification'
+    mailhog_port = 1025
+    mailhog_user = ''
+    mailhog_password = ''
+
+
+class Config:
+    env_file = ".env"

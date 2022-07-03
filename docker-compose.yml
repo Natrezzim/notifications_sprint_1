@@ -97,7 +97,7 @@ services:
     depends_on:
       - db
       - rabbitmq
-    entrypoint: 'python3 /usr/local/bin/worker/send_email_priority.py'
+    entrypoint: 'python3 /usr/local/bin/worker/send_email.py --priority'
 
   scheduler:
     container_name: scheduler
@@ -111,7 +111,14 @@ services:
       - service
     entrypoint: 'python3 /usr/local/bin/scheduler/main.py'
 
-
+  mailhog:
+    container_name: mailhog_notification
+    image: mailhog/mailhog
+    logging:
+      driver: 'none'
+    ports:
+      - 1025:1025
+      - 8025:8025
 volumes:
   nginx:
   postgres_data:

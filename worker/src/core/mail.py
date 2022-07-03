@@ -49,7 +49,7 @@ class EmailSMTP:
         message["To"] = to_email
         message["Subject"] = subject
         message.add_alternative(text, subtype='html')
-        self.server.sendmail(self.user, to_email, message.as_string())
+        self.server.sendmail(self.user or from_email, to_email, message.as_string())
 
     def close(self):
         if self.server is not None:
@@ -82,6 +82,15 @@ class EmailSmtpSendinblue(EmailSMTP):
             self.server = smtplib.SMTP(self.host, self.port)
             self.server.starttls(context=context)
             self.server.login(self.user, self.password)
+
+
+class EmailSMTPMailhog(EmailSMTP):
+    def connect(self):
+        if self.server is None:
+            # context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+            self.server = smtplib.SMTP(self.host, self.port)
+            # self.server.starttls(context=context)
+            # self.server.login(self.user, self.password)
 
 
 class EmailSendGrid:
