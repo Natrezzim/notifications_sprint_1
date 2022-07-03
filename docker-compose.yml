@@ -33,6 +33,7 @@ services:
       - 8000
     volumes:
       - static_volume:/usr/src/static/
+      - media_volume:/usr/src/media/
     depends_on:
       - db
 
@@ -46,6 +47,7 @@ services:
     volumes:
       - nginx:/var/log/nginx/
       - static_volume:/usr/src/static/
+      - media_volume:/usr/src/media/
     depends_on:
       - service
       - admin
@@ -95,7 +97,7 @@ services:
     depends_on:
       - db
       - rabbitmq
-    entrypoint: 'python3 /usr/local/bin/worker/send_email_priority.py'
+    entrypoint: 'python3 /usr/local/bin/worker/send_email.py --priority'
 
   scheduler:
     container_name: scheduler
@@ -109,9 +111,17 @@ services:
       - service
     entrypoint: 'python3 /usr/local/bin/scheduler/main.py'
 
-
+  mailhog:
+    container_name: mailhog_notification
+    image: mailhog/mailhog
+    logging:
+      driver: 'none'
+    ports:
+      - 1025:1025
+      - 8025:8025
 volumes:
   nginx:
   postgres_data:
   rabbitmq_data:
   static_volume:
+  media_volume:

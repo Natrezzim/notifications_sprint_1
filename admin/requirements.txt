@@ -10,3 +10,4 @@ sqlparse==0.4.2
 tzdata==2022.1
 psycopg2-binary==2.9.1
 gunicorn==20.0.4
+django-summernote==0.8.20.0

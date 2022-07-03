@@ -22,6 +22,7 @@ class Rabbit:
         self.queue = queue
         self.exchange = exchange
         self.init_channel = init_channel
+        print(init_channel)
 
     @backoff.on_exception(backoff.expo, pika.exceptions.AMQPConnectionError)
     def connect(self):
