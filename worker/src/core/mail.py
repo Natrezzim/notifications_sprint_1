@@ -87,10 +87,8 @@ class EmailSmtpSendinblue(EmailSMTP):
 class EmailSMTPMailhog(EmailSMTP):
     def connect(self):
         if self.server is None:
-            # context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
             self.server = smtplib.SMTP(self.host, self.port)
-            # self.server.starttls(context=context)
-            # self.server.login(self.user, self.password)
+
 
 
 class EmailSendGrid:
